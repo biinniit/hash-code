@@ -1,3 +1,5 @@
+<?php
+
 function validBraces($braces) {
   if(strlen($braces) % 2 == 1)
     return false;
@@ -25,3 +27,5 @@ function validBraces($braces) {
     }
   return empty($stack);
 }
+
+?>
