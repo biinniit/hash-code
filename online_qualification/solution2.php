@@ -4,7 +4,7 @@
    *
    * This was our solution, created at 10:27pm (UTC + 1), Feb 25, 2021;
    * the contest ended at 10:30pm. With just 3 minutes left,
-   * we were unable to run all datasets and make another solution.
+   * we were unable to run all datasets and make another submission.
    * 
    * Average runtime => 1m30s
    * Score => 8,280,886
