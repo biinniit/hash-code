@@ -1,2 +1,2 @@
-# hash-code-prep
-A compilation of algorithms we wrote while preparing for Hash Code 2021.
+# hash-code
+A compilation of my solutions for Google's Hash Code.
