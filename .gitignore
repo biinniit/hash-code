@@ -1,2 +1,4 @@
 digits-to-words.js
-.pdf
+*.pdf
+node_modules
+*.out
