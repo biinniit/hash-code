@@ -10,13 +10,22 @@ function readInput(clients: Client[]) {
   let n = parseInt(inputLines[0])
 
   for(let i = 0; i < n; ++i) {
-    const likes = inputLines[(2 * i) + 1].split(' ').filter((x, index) => index !== 0)
-    const dislikes = inputLines[(2 * i) + 2].split(' ').filter((x, index) => index !== 0)
+    const likes = inputLines[(2 * i) + 1]
+      .split(' ')
+      .filter((x, index) => index !== 0)
+    const dislikes = inputLines[(2 * i) + 2]
+      .split(' ')
+      .filter((x, index) => index !== 0)
 
     clients.push({ likes: likes, dislikes: dislikes})
   }
 }
 
+function writeOutput(ingredients: string[]) {
+  let output: string = ingredients.length + ' ' + ingredients.join(' ') + '\n'
+  fs.writeFileSync('a_an_example.out', output, 'utf-8')
+}
+
 const clients: Client[] = []
 readInput(clients)
-fs.writeFileSync('a_an_example.out', JSON.stringify(clients, null, 2), 'utf-8')
+writeOutput(clients[0].likes)
