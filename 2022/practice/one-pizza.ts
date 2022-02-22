@@ -17,7 +17,8 @@ clients.forEach(client => {
       ingredients.push(ingredient)
   })
 })
-console.log(`Ingredients: ${ingredients}`)
+//console.log('Ingredients:')
+//console.log(ingredients)
 
 clients.forEach(client => {
   client.dislikes
@@ -27,7 +28,8 @@ clients.forEach(client => {
         dislikes[dislike] = 0
     })
 })
-console.log(`Dislikes: ${Object.keys(dislikes)}`)
+//console.log('Dislikes:')
+//console.log(Object.keys(dislikes))
 
 Object.keys(dislikes).forEach(dislike => {
   clients.forEach(client => {
@@ -40,12 +42,13 @@ Object.keys(dislikes).forEach(dislike => {
   if(dislikes[dislike] < 0)
     ingredients.splice(ingredients.indexOf(dislike), 1)
 })
-console.log(`Dislike scores: ${JSON.stringify(dislikes, null, 2)}`)
+console.log('Non-negative dislike scores:')
+console.log(Object.entries(dislikes).filter(dislike => dislike[1] >= 0))
 
 writeOutput(ingredients)
 
 function readInput(clients: Client[]) {
-  const inputLines = fs.readFileSync('a_an_example.in', 'utf-8').split('\n')
+  const inputLines = fs.readFileSync('e_elaborate.in', 'utf-8').split('\n')
   let n = parseInt(inputLines[0])
 
   for(let i = 0; i < n; ++i) {
@@ -62,5 +65,5 @@ function readInput(clients: Client[]) {
 
 function writeOutput(ingredients: string[]) {
   let output: string = ingredients.length + ' ' + ingredients.join(' ') + '\n'
-  fs.writeFileSync('a_an_example.out', output, 'utf-8')
+  fs.writeFileSync('e_elaborate.out', output, 'utf-8')
 }
