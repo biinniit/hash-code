@@ -15,6 +15,11 @@ interface Person {
   skills: Skills
 }
 
+interface Assignment {
+  project: string
+  people: string[]
+}
+
 const DURATION_WEIGHT = 5
 const SCORE_WEIGHT = 1
 const EXPIRY_WEIGHT = 5
@@ -33,6 +38,58 @@ projects.sort(compareProjects)
 //console.log('Projects (after sort):')
 //console.log(projects)
 
+const projectQueue: Project[] = []
+const assignments: Assignment[] = []
+
+for(let i = 0, tryAgain = false; i < projects.length; ++i) {
+  let project: Project
+  if(tryAgain) {
+    if(projectQueue.length !== 0) {
+      project = projectQueue[0]
+      //console.log(`Trying ${project.name} again...`)
+      --i
+    }
+    else {
+      tryAgain = !tryAgain
+      --i; continue
+    }
+  }
+  else
+    project = projects[i]
+
+  const assignment: Assignment = { project: project.name, people: [] }
+  for(const [role, level] of Object.entries(project.roles)) {
+    let foundPerson = undefined
+    for(const person of people) {
+      if(role in person.skills && person.skills[role] >= level) {
+        foundPerson = person.name
+        if(assignment.people.includes(foundPerson))
+          continue
+        ++person.skills[role]
+        break
+      }
+    }
+
+    if(foundPerson == null)
+      break
+    assignment.people.push(foundPerson)
+  }
+
+  if(assignment.people.length === Object.keys(project.roles).length) {
+    if(!(tryAgain = !tryAgain))
+      projectQueue.shift()
+    assignments.push(assignment)
+  }
+  else if(assignment.people.length <= Object.keys(project.roles).length) {
+    if(tryAgain = !tryAgain)
+      projectQueue.push(project)
+  }
+}
+//console.log('Assignments:')
+//console.log(assignments)
+
+writeOutput(assignments)
+
 function calculatePriority(project: Project): number {
   return ((maxExpiry - project.duration) * DURATION_WEIGHT
     + project.score * SCORE_WEIGHT
@@ -48,12 +105,12 @@ function compareProjects(a: Project, b: Project): number {
   let aPriority = isFutile(a) ? 0 : calculatePriority(a)
   let bPriority = isFutile(b) ? 0 : calculatePriority(b)
 
-  console.log(`${a.name} priority: ${aPriority}, ${b.name} priority: ${bPriority}`)
+  //console.log(`${a.name} priority: ${aPriority}, ${b.name} priority: ${bPriority}`)
   return bPriority - aPriority
 }
 
 function readInput(people: Person[], projects: Project[]) {
-  const inputLines = fs.readFileSync('a_an_example.in.txt', 'utf-8').split('\n')
+  const inputLines = fs.readFileSync('b_better_start_small.in.txt', 'utf-8').split('\n')
   let lineNum = 0
   const SIZE = inputLines[lineNum++].split(' ')
   const C = parseInt(SIZE[0]); const P = parseInt(SIZE[1])
@@ -90,4 +147,12 @@ function readInput(people: Person[], projects: Project[]) {
       roles: roles
     })
   }
+}
+
+function writeOutput(assignments: Assignment[]) {
+  let output: string = assignments.length + '\n'
+    + assignments
+    .map(assignment => assignment.project + '\n' + assignment.people.join(' '))
+    .join('\n')
+  fs.writeFileSync('b_better_start_small.out.txt', output, 'utf-8')
 }
