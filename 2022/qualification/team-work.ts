@@ -43,6 +43,8 @@ const assignments: Assignment[] = []
 
 for(let i = 0, tryAgain = false; i < projects.length; ++i) {
   let project: Project
+  let incrementSkill: number[] = []
+  let incrementSkillFor: string[] = []
   if(tryAgain) {
     if(projectQueue.length !== 0) {
       project = projectQueue[0]
@@ -60,25 +62,34 @@ for(let i = 0, tryAgain = false; i < projects.length; ++i) {
   const assignment: Assignment = { project: project.name, people: [] }
   for(const [role, level] of Object.entries(project.roles)) {
     let foundPerson = undefined
-    for(const person of people) {
-      if(role in person.skills && person.skills[role] >= level) {
+    for(let j = 0; j < people.length; ++j) {
+      const person = people[j]
+      if(role.trimEnd() in person.skills && person.skills[role.trimEnd()] >= level) {
         foundPerson = person.name
         if(assignment.people.includes(foundPerson))
           continue
-        ++person.skills[role]
+        incrementSkill.push(j)
+        incrementSkillFor.push(role.trimEnd())
         break
       }
     }
 
     if(foundPerson == null)
       break
+    
     assignment.people.push(foundPerson)
   }
 
   if(assignment.people.length === Object.keys(project.roles).length) {
     if(!(tryAgain = !tryAgain))
       projectQueue.shift()
+    //console.log(`Adding assignment for '${assignment.project}'`)
+    
     assignments.push(assignment)
+
+    // increment skills
+    for(let index = 0; index < incrementSkill.length; ++index)
+      ++(people[incrementSkill[index]].skills[incrementSkillFor[index]])
   }
   else if(assignment.people.length <= Object.keys(project.roles).length) {
     if(tryAgain = !tryAgain)
@@ -133,7 +144,10 @@ function readInput(people: Person[], projects: Project[]) {
     let roles: Skills = {}
     for(let j = 0; j < nRoles; ++j) {
       const ROLE = inputLines[lineNum++].split(' ')
-      roles[ROLE[0]] = parseInt(ROLE[1])
+      if(ROLE[0] in roles)
+        roles[ROLE[0] + ' '] = parseInt(ROLE[1])
+      else
+        roles[ROLE[0]] = parseInt(ROLE[1])
     }
 
     if(parseInt(PROJECT_LINE[3]) > maxExpiry)
@@ -154,5 +168,6 @@ function writeOutput(assignments: Assignment[]) {
     + assignments
     .map(assignment => assignment.project + '\n' + assignment.people.join(' '))
     .join('\n')
-  fs.writeFileSync('b_better_start_small.out.txt', output, 'utf-8')
+    + '\n'
+  fs.writeFileSync('b_better_start_small.out', output, 'utf-8')
 }
