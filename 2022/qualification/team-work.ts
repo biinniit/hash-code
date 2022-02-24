@@ -1,3 +1,8 @@
+/**
+ * First submission that passed all test cases
+ * Score: 1,967,136
+ */
+
 import * as fs from 'fs'
 
 type Skills = Record<string, number>
@@ -66,17 +71,20 @@ for(let i = 0, tryAgain = false; i < projects.length; ++i) {
       const person = people[j]
       if(role.trimEnd() in person.skills && person.skills[role.trimEnd()] >= level) {
         foundPerson = person.name
-        if(assignment.people.includes(foundPerson))
+        if(assignment.people.includes(foundPerson)) {
+          foundPerson = undefined
           continue
-        incrementSkill.push(j)
-        incrementSkillFor.push(role.trimEnd())
+        }
+        if(person.skills[role.trimEnd()] === level) {
+          incrementSkill.push(j)
+          incrementSkillFor.push(role.trimEnd())
+        }
         break
       }
     }
 
     if(foundPerson == null)
       break
-    
     assignment.people.push(foundPerson)
   }
 
@@ -121,7 +129,7 @@ function compareProjects(a: Project, b: Project): number {
 }
 
 function readInput(people: Person[], projects: Project[]) {
-  const inputLines = fs.readFileSync('b_better_start_small.in.txt', 'utf-8').split('\n')
+  const inputLines = fs.readFileSync('a_an_example.in', 'utf-8').split('\n')
   let lineNum = 0
   const SIZE = inputLines[lineNum++].split(' ')
   const C = parseInt(SIZE[0]); const P = parseInt(SIZE[1])
@@ -144,10 +152,9 @@ function readInput(people: Person[], projects: Project[]) {
     let roles: Skills = {}
     for(let j = 0; j < nRoles; ++j) {
       const ROLE = inputLines[lineNum++].split(' ')
-      if(ROLE[0] in roles)
-        roles[ROLE[0] + ' '] = parseInt(ROLE[1])
-      else
-        roles[ROLE[0]] = parseInt(ROLE[1])
+      while(ROLE[0] in roles)
+        ROLE[0] += ' '
+      roles[ROLE[0]] = parseInt(ROLE[1])
     }
 
     if(parseInt(PROJECT_LINE[3]) > maxExpiry)
@@ -169,5 +176,5 @@ function writeOutput(assignments: Assignment[]) {
     .map(assignment => assignment.project + '\n' + assignment.people.join(' '))
     .join('\n')
     + '\n'
-  fs.writeFileSync('b_better_start_small.out', output, 'utf-8')
+  fs.writeFileSync('a_an_example.out', output, 'utf-8')
 }
