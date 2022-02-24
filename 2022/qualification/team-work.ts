@@ -15,13 +15,42 @@ interface Person {
   skills: Skills
 }
 
+const DURATION_WEIGHT = 5
+const SCORE_WEIGHT = 1
+const EXPIRY_WEIGHT = 5
+//const NUMBER_PEOPLE_WEIGHT = 10 ** 2.5
+
 const people: Person[] = []
 const projects: Project[] = []
+let maxExpiry = 0
 readInput(people, projects)
 //console.log('People:')
 //console.log(people)
-//console.log('Projects:')
+//console.log('Projects (before sort):')
 //console.log(projects)
+
+projects.sort(compareProjects)
+//console.log('Projects (after sort):')
+//console.log(projects)
+
+function calculatePriority(project: Project): number {
+  return ((maxExpiry - project.duration) * DURATION_WEIGHT
+    + project.score * SCORE_WEIGHT
+    + (maxExpiry - project.expiry) * EXPIRY_WEIGHT)
+    / Object.keys(project.roles).length
+}
+
+function isFutile(project: Project): boolean {
+  return project.expiry - project.duration + project.score < 1
+}
+
+function compareProjects(a: Project, b: Project): number {
+  let aPriority = isFutile(a) ? 0 : calculatePriority(a)
+  let bPriority = isFutile(b) ? 0 : calculatePriority(b)
+
+  console.log(`${a.name} priority: ${aPriority}, ${b.name} priority: ${bPriority}`)
+  return bPriority - aPriority
+}
 
 function readInput(people: Person[], projects: Project[]) {
   const inputLines = fs.readFileSync('a_an_example.in.txt', 'utf-8').split('\n')
@@ -49,6 +78,9 @@ function readInput(people: Person[], projects: Project[]) {
       const ROLE = inputLines[lineNum++].split(' ')
       roles[ROLE[0]] = parseInt(ROLE[1])
     }
+
+    if(parseInt(PROJECT_LINE[3]) > maxExpiry)
+      maxExpiry = parseInt(PROJECT_LINE[3])
 
     projects.push({
       name: PROJECT_LINE[0],
