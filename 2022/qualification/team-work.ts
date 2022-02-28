@@ -8,7 +8,8 @@
  * C: DURATION_WEIGHT=150,SCORE_WEIGHT=1,EXPIRY_WEIGHT=5
  * F: DURATION_WEIGHT=1000,SCORE_WEIGHT=1,EXPIRY_WEIGHT=1
  * 
- * Still yet to implement mentorship logic
+ * TODO: fix isFutile problem, negative numbers
+ * TODO: implement mentorship logic
  * 
  * Score: 2,352,790
  */
